@@ -1,4 +1,9 @@
-"""Run the API locally: `python main.py` (same as `uvicorn app.main:app --reload`)."""
+"""Jalankan server: `.venv/bin/python main.py` atau `fastapi dev` (tanpa argumen).
+
+Objek `app` di-import agar FastAPI CLI menemukan aplikasi di file ini.
+"""
+
+from app.main import app  # noqa: F401 — dipakai oleh `fastapi dev` / `fastapi run`
 
 import uvicorn
 

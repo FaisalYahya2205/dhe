@@ -1,31 +1,27 @@
-from contextlib import asynccontextmanager
-from collections.abc import AsyncIterator
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import router as root_router
+from app.routers import upload
+
+app = FastAPI(
+    title="DHE API",
+    version="0.1.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(upload.router)
 
 
-@asynccontextmanager
-async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
-    yield
-
-
-def create_app() -> FastAPI:
-    application = FastAPI(
-        title="DHE Backend",
-        lifespan=lifespan,
-    )
-    application.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=False,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-    application.include_router(root_router)
-    return application
-
-
-app = create_app()
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
