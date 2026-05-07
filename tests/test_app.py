@@ -57,6 +57,29 @@ def test_upload_rejects_non_csv_excel() -> None:
     assert "csv" in r.json()["detail"].lower() or "excel" in r.json()["detail"].lower()
 
 
+def test_upload_analyze_csv() -> None:
+    csv_body = b"a,b\n1,2\n1,2\n3,4\n"
+    r = client.post(
+        "/upload/analyze",
+        files={"file": ("data.csv", csv_body, "text/csv")},
+    )
+    assert r.status_code == 200
+    payload = r.json()
+    assert "sha256" in payload
+    a = payload["analysis"]
+    assert a["row_count_input"] == 3
+    assert a["exact_duplicate_rows"] == 1
+    assert a["rows_after_exact_dedupe"] == 2
+
+
+def test_upload_analyze_rejects_garbage_xlsx() -> None:
+    r = client.post(
+        "/upload/analyze",
+        files={"file": ("bad.xlsx", b"not-a-workbook", "application/octet-stream")},
+    )
+    assert r.status_code == 400
+
+
 def test_upload_rejects_oversized(monkeypatch: object) -> None:
     from app.routers import upload as upload_mod
 

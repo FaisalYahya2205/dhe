@@ -33,6 +33,7 @@ Atau memakai CLI FastAPI (reload, default `127.0.0.1:8000`):
 
 - Docs: http://127.0.0.1:8000/docs
 - Health: http://127.0.0.1:8000/health
+- Analisis duplikasi (pandas + rapidfuzz): `POST /upload/analyze` (lihat `/docs`)
 
 ## Test
 
